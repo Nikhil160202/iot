@@ -1,0 +1,242 @@
+Q1 Write a Java Program to implement undo command to test Ceiling fan.
+interface Command {
+    void execute();
+    void undo();
+}
+class CeilingFan {
+    public static final int OFF = 0;
+    public static final int LOW = 1;
+    public static final int MEDIUM = 2;
+    public static final int HIGH = 3;
+    private int speed;
+    public CeilingFan() {
+        speed = OFF;
+    }
+    public void high() {
+        speed = HIGH;
+        System.out.println("Ceiling fan is on HIGH");
+    }
+    public void medium() {
+        speed = MEDIUM;
+        System.out.println("Ceiling fan is on MEDIUM");
+    }
+    public void low() {
+        speed = LOW;
+        System.out.println("Ceiling fan is on LOW");
+    }
+    public void off() {
+        speed = OFF;
+        System.out.println("Ceiling fan is OFF");
+    }
+    public int getSpeed() {
+        return speed;
+    }
+}
+class CeilingFanHighCommand implements Command {
+    private CeilingFan ceilingFan;
+    private int prevSpeed;
+    public CeilingFanHighCommand(CeilingFan ceilingFan) {
+        this.ceilingFan = ceilingFan;
+    }
+    @Override
+    public void execute() {
+        prevSpeed = ceilingFan.getSpeed();  // Save current state
+        ceilingFan.high();
+    }
+    @Override
+    public void undo() {
+        switch (prevSpeed) {
+            case CeilingFan.HIGH:
+                ceilingFan.high();
+                break;
+            case CeilingFan.MEDIUM:
+                ceilingFan.medium();
+                break;
+            case CeilingFan.LOW:
+                ceilingFan.low();
+                break;
+            case CeilingFan.OFF:
+                ceilingFan.off();
+                break;
+        }
+        System.out.println("Undoing the previous fan action");
+    }
+}
+class CeilingFanMediumCommand implements Command {
+    private CeilingFan ceilingFan;
+    private int prevSpeed;
+    public CeilingFanMediumCommand(CeilingFan ceilingFan) {
+        this.ceilingFan = ceilingFan;
+    }
+    @Override
+    public void execute() {
+        prevSpeed = ceilingFan.getSpeed();
+        ceilingFan.medium();
+    }
+    @Override
+    public void undo() {
+        switch (prevSpeed) {
+            case CeilingFan.HIGH:
+                ceilingFan.high();
+                break;
+            case CeilingFan.MEDIUM:
+                ceilingFan.medium();
+                break;
+            case CeilingFan.LOW:
+                ceilingFan.low();
+                break;
+            case CeilingFan.OFF:
+                ceilingFan.off();
+                break;
+        }
+        System.out.println("Undoing the previous fan action");
+    }
+}
+class CeilingFanLowCommand implements Command {
+    private CeilingFan ceilingFan;
+    private int prevSpeed;
+    public CeilingFanLowCommand(CeilingFan ceilingFan) {
+        this.ceilingFan = ceilingFan;
+    }
+    @Override
+    public void execute() {
+        prevSpeed = ceilingFan.getSpeed();
+        ceilingFan.low();
+    }
+    @Override
+    public void undo() {
+        switch (prevSpeed) {
+            case CeilingFan.HIGH:
+                ceilingFan.high();
+                break;
+            case CeilingFan.MEDIUM:
+                ceilingFan.medium();
+                break;
+            case CeilingFan.LOW:
+                ceilingFan.low();
+                break;
+            case CeilingFan.OFF:
+                ceilingFan.off();
+                break;
+        }
+        System.out.println("Undoing the previous fan action");
+    }
+}
+class CeilingFanOffCommand implements Command {
+    private CeilingFan ceilingFan;
+    private int prevSpeed;
+
+    public CeilingFanOffCommand(CeilingFan ceilingFan) {
+        this.ceilingFan = ceilingFan;
+    }
+    @Override
+    public void execute() {
+        prevSpeed = ceilingFan.getSpeed();
+        ceilingFan.off();
+    }
+    @Override
+    public void undo() {
+        switch (prevSpeed) {
+            case CeilingFan.HIGH:
+                ceilingFan.high();
+                break;
+            case CeilingFan.MEDIUM:
+                ceilingFan.medium();
+                break;
+            case CeilingFan.LOW:
+                ceilingFan.low();
+                break;
+            case CeilingFan.OFF:
+                ceilingFan.off();
+                break;
+        }
+        System.out.println("Undoing the previous fan action");
+    }
+}
+class RemoteControl {
+    private Command[] onCommands;
+    private Command[] offCommands;
+    private Command undoCommand;
+    public RemoteControl() {
+        onCommands = new Command[5];
+        offCommands = new Command[5];
+        undoCommand = null;
+        for (int i = 0; i < 5; i++) {
+            onCommands[i] = offCommands[i] = null;
+        }
+    }
+    public void setCommand(int slot, Command onCommand, Command offCommand) {
+        onCommands[slot] = onCommand;
+        offCommands[slot] = offCommand;
+    }
+    public void pressOnButton(int slot) {
+        if (onCommands[slot] != null) {
+            onCommands[slot].execute();
+            undoCommand = onCommands[slot];
+        }
+    }
+    public void pressOffButton(int slot) {
+        if (offCommands[slot] != null) {
+            offCommands[slot].execute();
+            undoCommand = offCommands[slot];
+        }
+    }
+    public void pressUndoButton() {
+        if (undoCommand != null) {
+            undoCommand.undo();
+        }
+    }
+}
+public class CommandPatternUndoTest {
+    public static void main(String[] args) {
+        // Create the receiver (CeilingFan)
+        CeilingFan ceilingFan = new CeilingFan();
+        // Create the concrete command objects
+        CeilingFanHighCommand ceilingFanHigh = new CeilingFanHighCommand(ceilingFan);
+        CeilingFanMediumCommand ceilingFanMedium = new CeilingFanMediumCommand(ceilingFan);
+        CeilingFanLowCommand ceilingFanLow = new CeilingFanLowCommand(ceilingFan);
+        CeilingFanOffCommand ceilingFanOff = new CeilingFanOffCommand(ceilingFan);
+        // Create the remote control (Invoker)
+        RemoteControl remote = new RemoteControl();
+        // Set the commands for the remote control
+        remote.setCommand(0, ceilingFanHigh, ceilingFanOff);
+        remote.setCommand(1, ceilingFanMedium, ceilingFanOff);
+        remote.setCommand(2, ceilingFanLow, ceilingFanOff);
+        // Test the remote control
+        System.out.println("Pressing ON button for HIGH speed fan:");
+        remote.pressOnButton(0); // Turn fan on HIGH
+        System.out.println("\nPressing Undo button:");
+        remote.pressUndoButton(); // Undo previous action
+        System.out.println("\nPressing ON button for MEDIUM speed fan:");
+        remote.pressOnButton(1); // Turn fan on MEDIUM
+        System.out.println("\nPressing Undo button:");
+        remote.pressUndoButton(); // Undo previous action
+        System.out.println("\nPressing ON button for LOW speed fan:");
+        remote.pressOnButton(2); // Turn fan on LOW
+        System.out.println("\nPressing Undo button:");
+        remote.pressUndoButton(); // Undo previous action
+        System.out.println("\nPressing OFF button:");
+        remote.pressOffButton(0); // Turn fan OFF
+        System.out.println("\nPressing Undo button:");
+        remote.pressUndoButton(); // Undo previous action
+    }
+}
+Q2 Write a program for LDR to vary the light intensity of LED using
+Arduino.
+const int ldrPin = A0; // Pin connected to LDR voltage divider
+const int ledPin = 9; // Pin connected to LED
+void setup() {
+ pinMode(ledPin, OUTPUT); // Set LED pin as output
+ Serial.begin(9600); // Start serial communication
+}
+void loop() {
+ int ldrValue = analogRead(ldrPin); // Read the LDR value (0 to 1023)
+ // Print LDR value to Serial Monitor
+ Serial.print("LDR Value: ");
+ Serial.println(ldrValue);
+ // Map the LDR value to PWM range (0 to 255)
+ int ledBrightness = map(ldrValue, 0, 1023, 255, 0); // Invert the mapping
+ // Set the LED brightness
+ analogWrite(ledPin, ledBrightness);
+ delay(100); // Short delay for stability
+}
