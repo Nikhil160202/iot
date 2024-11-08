@@ -1,0 +1,81 @@
+Q1.Write a JAVA Program to implement built-in support (java.util.Observable) Weather
+station with members temperature, humidity, pressure and methods
+mesurmentsChanged(), setMesurment(), getTemperature(), getHumidity(),
+getPressure() 
+import java.util.Observable;
+import java.util.Observer;
+class WeatherStation extends Observable {
+    private float temperature;
+    private float humidity;
+    private float pressure;
+    public void setMeasurements(float temperature, float humidity, float pressure) {
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.pressure = pressure;
+        measurementsChanged();
+    }
+    public void measurementsChanged() {
+        setChanged();  // Mark the object as changed
+        notifyObservers();  // Notify all observers
+    }
+    public float getTemperature() {
+        return temperature;
+    }
+    public float getHumidity() {
+        return humidity;
+    }
+    public float getPressure() {
+        return pressure;
+    }
+}
+class DisplayDevice implements Observer {
+    private float temperature;
+    private float humidity;
+    private float pressure;
+    @Override
+    public void update(Observable observable, Object arg) {
+        if (observable instanceof WeatherStation) {
+            WeatherStation weatherStation = (WeatherStation) observable;
+            this.temperature = weatherStation.getTemperature();
+            this.humidity = weatherStation.getHumidity();
+            this.pressure = weatherStation.getPressure();
+            display();
+        }
+    }
+    public void display() {
+        System.out.println("Weather Information Updated:");
+        System.out.println("Temperature: " + temperature + "°C");
+        System.out.println("Humidity: " + humidity + "%");
+        System.out.println("Pressure: " + pressure + " hPa");
+        System.out.println();
+    }
+}
+public class WeatherStationTest {
+    public static void main(String[] args) {
+        WeatherStation weatherStation = new WeatherStation();
+        DisplayDevice displayDevice = new DisplayDevice();
+        weatherStation.addObserver(displayDevice);
+        System.out.println("Setting new weather data...");
+        weatherStation.setMeasurements(25.5f, 60.0f, 1012.0f);  // Set temperature, humidity, and pressure
+        System.out.println("Setting another new weather data...");
+        weatherStation.setMeasurements(30.0f, 65.0f, 1010.0f);  // Set new measurements
+        System.out.println("Setting yet another new weather data...");
+        weatherStation.setMeasurements(20.0f, 55.0f, 1020.0f);  // Set another set of measurements
+    }
+}
+@2.Write a program for LDR to vary the light intensity of LED using
+Arduino.
+const int ldrPin = A0; // Pin connected to LDR voltage divider
+const int ledPin = 9; // Pin connected to LED
+void setup() {
+ pinMode(ledPin, OUTPUT); // Set LED pin as output
+ Serial.begin(9600); // Start serial communication
+}
+void loop() {
+ int ldrValue = analogRead(ldrPin); // Read the LDR value (0 to 1023)
+ Serial.print("LDR Value: ");
+ Serial.println(ldrValue);
+ int ledBrightness = map(ldrValue, 0, 1023, 255, 0); // Invert the mapping
+ analogWrite(ledPin, ledBrightness);
+ delay(100); // Short delay for stability
+}
