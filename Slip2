@@ -1,0 +1,73 @@
+Q1. Write a Java Program to implement Singleton pattern for multithreading.
+Ans:- class Singleton {
+    private static volatile Singleton instance;
+    private Singleton() {
+        System.out.println("Singleton instance created");
+    }
+    public static Singleton getInstance() {
+        if (instance == null) { // First check without locking
+            synchronized (Singleton.class) {
+                if (instance == null) { // Second check with locking
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+   public void showMessage() {
+        System.out.println("Hello from Singleton instance!");
+    }
+}
+public class SingletonDemo {
+    public static void main(String[] args) {
+        Thread thread1 = new Thread(() -> {
+            Singleton singleton = Singleton.getInstance();
+            singleton.showMessage();
+        });
+
+        Thread thread2 = new Thread(() -> {
+            Singleton singleton = Singleton.getInstance();
+            singleton.showMessage();
+        });
+        thread1.start();
+        thread2.start();
+    }
+}
+
+Q2. Write a program to measure the distance using ultrasonic sensor and make LED blink
+using Arduino.
+const int trigPin = 9; // Trigger pin for the ultrasonic sensor
+const int echoPin = 10; // Echo pin for the ultrasonic sensor
+const int ledPin = 13; // LED pin
+void setup() {
+ Serial.begin(9600); // Start the serial communication
+ pinMode(trigPin, OUTPUT); // Set the TRIG pin as an output
+ pinMode(echoPin, INPUT); // Set the ECHO pin as an input
+ pinMode(ledPin, OUTPUT); // Set the LED pin as an output
+}
+void loop() {
+ long duration, distance;
+ // Clear the TRIG pin
+ digitalWrite(trigPin, LOW);
+ delayMicroseconds(2);
+ // Set the TRIG pin HIGH for 10 microseconds
+ digitalWrite(trigPin, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(trigPin, LOW);
+ // Read the ECHO pin
+ duration = pulseIn(echoPin, HIGH);
+// Calculate the distance in cm
+ distance = (duration * 0.034) / 2;
+ // Print distance to Serial Monitor
+ Serial.print("Distance: ");
+ Serial.print(distance);
+Serial.println(" cm");
+ // Blink the LED based on distance
+ if (distance < 10) { // If distance is less than 10 cm
+ digitalWrite(ledPin, HIGH); // Turn the LED on
+ } else {
+ digitalWrite(ledPin, LOW); // Turn the LED off
+ }
+ delay(500); // Wait before the next measurement
+}
+
