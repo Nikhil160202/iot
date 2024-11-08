@@ -1,0 +1,64 @@
+Q1. Write a Java Program to implement Adapter pattern for Enumeration iterator.
+Ans:- 
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
+class EnumerationIteratorAdapter implements Iterator<Object> {
+    private Enumeration<Object> enumeration;
+   public EnumerationIteratorAdapter(Enumeration<Object> enumeration) {
+        this.enumeration = enumeration;
+    }
+    @Override
+    public boolean hasNext() {
+        return enumeration.hasMoreElements();
+    }
+   @Override
+    public Object next() {
+        return enumeration.nextElement();
+    }
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Remove operation is not supported.");
+    }
+}
+public class AdapterPatternExample {
+    public static void main(String[] args) {
+        Vector<String> vector = new Vector<>();
+        vector.add("Apple");
+        vector.add("Banana");
+        vector.add("Cherry");
+      Enumeration<String> enumeration = vector.elements();
+       Iterator<Object> iterator = new EnumerationIteratorAdapter(enumeration);
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+    }
+}
+
+Q2. Write a program to connect with the available Wi-Fi using Arduino.
+#include <SoftwareSerial.h>
+SoftwareSerial espSerial(10, 11); // RX, TX for ESP8266
+void setup() {
+ Serial.begin(115200); // Start Serial Monitor
+ espSerial.begin(115200); // Start ESP8266 Serial
+ // Initialize ESP8266
+ espSerial.println("AT+RST"); // Reset the ESP
+ delay(1000);
+ espSerial.println("AT+CWMODE=1"); // Set to Station mode
+ delay(1000);
+// Connect to Wi-Fi
+ espSerial.println("AT+SSID=\"your_SSID\""); // Replace with your Wi-Fi
+SSID
+ delay(1000);
+ espSerial.println("AT+PWD=\"your_PASSWORD\""); // Replace with your
+Wi-Fi Password
+ delay(1000);
+ espSerial.println("AT+CWJAP"); // Connect to Wi-Fi
+ delay(5000);
+}
+void loop() {
+ while (espSerial.available()) {
+ Serial.write(espSerial.read()); // Print ESP responses to Serial Monitor
+ }
+ delay(1000);
+}
