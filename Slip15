@@ -1,0 +1,125 @@
+Q.1 Write a Java Program to implement Facade Design Pattern for Home Theater.
+class Amplifier {
+    public void on() {
+        System.out.println("Amplifier is ON");
+    }
+
+    public void off() {
+        System.out.println("Amplifier is OFF");
+    }
+
+    public void setVolume(int level) {
+        System.out.println("Setting volume to " + level);
+    }
+}
+class DVDPlayer {
+    public void on() {
+        System.out.println("DVD Player is ON");
+    }
+
+    public void off() {
+        System.out.println("DVD Player is OFF");
+    }
+
+    public void play() {
+        System.out.println("DVD Player is playing the movie");
+    }
+
+    public void stop() {
+        System.out.println("DVD Player has stopped");
+    }
+}
+class Projector {
+    public void on() {
+        System.out.println("Projector is ON");
+    }
+    public void off() {
+        System.out.println("Projector is OFF");
+    }
+    public void focus() {
+        System.out.println("Projector is focused");
+    }
+}
+class Screen {
+    public void up() {
+        System.out.println("Screen is UP");
+    }
+    public void down() {
+        System.out.println("Screen is DOWN");
+    }
+}
+class Lights {
+    public void dim() {
+        System.out.println("Lights are dimmed");
+    }
+    public void bright() {
+        System.out.println("Lights are bright");
+    }
+}
+class HomeTheaterFacade {
+    private Amplifier amplifier;
+    private DVDPlayer dvdPlayer;
+    private Projector projector;
+    private Screen screen;
+    private Lights lights;
+    public HomeTheaterFacade(Amplifier amplifier, DVDPlayer dvdPlayer, Projector projector, Screen screen, Lights lights) {
+        this.amplifier = amplifier;
+        this.dvdPlayer = dvdPlayer;
+        this.projector = projector;
+        this.screen = screen;
+        this.lights = lights;
+    }
+    public void watchMovie() {
+        System.out.println("Get ready to watch a movie...");
+        lights.dim();
+        screen.down();
+        projector.on();
+        projector.focus();
+        amplifier.on();
+        amplifier.setVolume(10);
+        dvdPlayer.on();
+        dvdPlayer.play();
+    }
+    public void endMovie() {
+        System.out.println("Shutting down the movie theater...");
+        lights.bright();
+        screen.up();
+        projector.off();
+        amplifier.off();
+        dvdPlayer.stop();
+        dvdPlayer.off();
+    }
+}
+public class FacadePatternTest {
+    public static void main(String[] args) {
+        Amplifier amplifier = new Amplifier();
+        DVDPlayer dvdPlayer = new DVDPlayer();
+        Projector projector = new Projector();
+        Screen screen = new Screen();
+        Lights lights = new Lights();
+        HomeTheaterFacade homeTheaterFacade = new HomeTheaterFacade(amplifier, dvdPlayer, projector, screen, lights);
+        homeTheaterFacade.watchMovie();
+        homeTheaterFacade.endMovie();
+    }
+}
+
+Q2.Write a program to sense a finger when it is placed on the board Arduino.
+const int sensorPin = 2; // Pin connected to the OUT of the capacitive touch
+sensor
+const int ledPin = 13; // Pin connected to the LED
+void setup() {
+ pinMode(sensorPin, INPUT); // Set the sensor pin as input
+ pinMode(ledPin, OUTPUT); // Set the LED pin as output
+ Serial.begin(9600); // Start serial communication
+}
+void loop() {
+ int sensorValue = digitalRead(sensorPin); // Read the sensor value
+ Serial.print("Sensor Value: ");
+ Serial.println(sensorValue);
+ if (sensorValue == HIGH) {
+ digitalWrite(ledPin, HIGH); // Turn the LED on
+ } else {
+ digitalWrite(ledPin, LOW); // Turn the LED off
+ }
+ delay(100); // Short delay for stability
+}
