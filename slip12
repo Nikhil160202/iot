@@ -1,132 +1,81 @@
-Q1. Write a java program to implement Adapter pattern to design Heart Model to Beat
-Model.
-Ans
-interface BeatModel {
-    void on();
-    void off();
-    void setBPM(int bpm);
-    int getBPM();
+Write a Java Program to implement Decorator Pattern for interface Car to define the
+assemble() method and then decorate it to Sports car and Luxury Car
+Ans: 
+// Car Interface
+interface Car {
+    void assemble();
 }
-interface HeartModel {
-    void start();
-    void stop();
-    int getHeartRate();
-}
-class HeartRateMonitor implements HeartModel {
-    private int heartRate = 70; // Simulate a heart rate of 70 beats per minute
+class BasicCar implements Car {
     @Override
-    public void start() {
-        System.out.println("HeartRateMonitor started.");
-    }
-    @Override
-    public void stop() {
-        System.out.println("HeartRateMonitor stopped.");
-    }
-    @Override
-    public int getHeartRate() {)
-        return heartRate;
+    public void assemble() {
+        System.out.println("Basic Car.");
     }
 }
-class HeartModelAdapter implements BeatModel {
-    private HeartModel heartModel;
-    public HeartModelAdapter(HeartModel heartModel) {
-        this.heartModel = heartModel;
+abstract class CarDecorator implements Car {
+    protected Car car;
+    public CarDecorator(Car car) {
+        this.car = car;
     }
-    @Override
-    public void on() {
-        heartModel.start();
-    }
-    @Override
-    public void off() {
-        heartModel.stop();
-    }
-    @Override
-    public void setBPM(int bpm) {
-        System.out.println("Setting BPM to: " + bpm);
-    }
-    @Override
-    public int getBPM() {
-        return heartModel.getHeartRate();
+    public void assemble() {
+        this.car.assemble();  // Delegate the assembling task to the wrapped car
     }
 }
- class AdapterPatternTest {
+class SportsCarDecorator extends CarDecorator {
+    public SportsCarDecorator(Car car) {
+        super(car);
+    }
+    @Override
+    public void assemble() {
+        car.assemble();  // First, assemble the basic car
+        addSportsFeatures();  // Then add sports features
+    }
+    private void addSportsFeatures() {
+        System.out.println("Adding features of Sports Car.");
+    }
+}
+class LuxuryCarDecorator extends CarDecorator {
+    public LuxuryCarDecorator(Car car) {
+        super(car);
+    }
+    @Override
+    public void assemble() {
+        car.assemble();  // First, assemble the basic car
+        addLuxuryFeatures();  // Then add luxury features
+    }
+    private void addLuxuryFeatures() {
+        System.out.println("Adding features of Luxury Car.");
+    }
+}
+public class DecoratorPatternTest {
     public static void main(String[] args) {
-        HeartModel heartModel = new HeartRateMonitor();
-        BeatModel beatModel = new HeartModelAdapter(heartModel);
-        System.out.println("Using HeartModel as BeatModel via Adapter:");
-        beatModel.on();
-        System.out.println("Current BPM: " + beatModel.getBPM());
-        beatModel.setBPM(80);
-        System.out.println("New BPM: " + beatModel.getBPM());
-        beatModel.off();
+        Car sportsCar = new SportsCarDecorator(new BasicCar());
+        System.out.println("Sports Car: ");
+        sportsCar.assemble();  // Assemble a sports car
+        System.out.println("\n*****");
+        Car sportsLuxuryCar = new LuxuryCarDecorator(new SportsCarDecorator(new BasicCar()));
+        System.out.println("Sports Luxury Car: ");
+        sportsLuxuryCar.assemble();  // Assemble a sports luxury car
     }
 }
-Q.2 Run some python programs on Pi like
- a) Light an LED through Python program
- b) Get input from two switches and switch on corresponding LEDs
- c) Flash an LED at a given on time and off time cycle, where the two times are taken
-from a file
-import RPi.GPIO as GPIO
-import time
-# Set up GPIO mode
-GPIO.setmode(GPIO.BCM)
-# Define pins for switches, LEDs, and flash cycle
-SWITCH1_PIN = 17
-SWITCH2_PIN = 27
-LED1_PIN = 22
-LED2_PIN = 23
-FLASH_LED_PIN = 24
-# Set up switches as input with pull-up resistors, LEDs as output
-GPIO.setup(SWITCH1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(SWITCH2_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(LED1_PIN, GPIO.OUT)
-GPIO.setup(LED2_PIN, GPIO.OUT)
-GPIO.setup(FLASH_LED_PIN, GPIO.OUT)
-# Function to read on-time and off-time from a file
-def read_times_from_file(file_path):
-    try:
-        with open(file_path, 'r') as file:
-            on_time, off_time = map(int, file.readline().split())
-        return on_time, off_time
-    except Exception as e:
-        print(f"Error reading from file: {e}")
-        return 2, 1  # Default on-time and off-time
-# Main program loop
-try:
-    # Read on-time and off-time from file for flashing LED
-    on_time, off_time = read_times_from_file('times.txt')
-    
-    while True:
-        # 1. Light up the first LED for 5 seconds (LED1)
-        GPIO.output(LED1_PIN, GPIO.HIGH)
-        print("LED1 is ON")
-        time.sleep(5)
-        GPIO.output(LED1_PIN, GPIO.LOW)
-        print("LED1 is OFF")
-        # 2. Get input from switches and switch on corresponding LEDs (LED1 and LED2)
-        if GPIO.input(SWITCH1_PIN) == GPIO.LOW:  # If switch 1 is pressed
-            GPIO.output(LED1_PIN, GPIO.HIGH)  # Turn on LED1
-            print("Switch 1 pressed, LED1 is ON")
-        else:
-            GPIO.output(LED1_PIN, GPIO.LOW)  # Turn off LED1
-        if GPIO.input(SWITCH2_PIN) == GPIO.LOW:  # If switch 2 is pressed
-            GPIO.output(LED2_PIN, GPIO.HIGH)  # Turn on LED2
-            print("Switch 2 pressed, LED2 is ON")
-        else:
-            GPIO.output(LED2_PIN, GPIO.LOW)  # Turn off LED2
-        # 3. Flash LED with on-time and off-time cycle from file (FLASH_LED_PIN)
-        GPIO.output(FLASH_LED_PIN, GPIO.HIGH)  # Turn on the flashing LED
-        print("Flashing LED ON")
-        time.sleep(on_time)  # Keep LED on for the specified on-time
-        GPIO.output(FLASH_LED_PIN, GPIO.LOW)  # Turn off the flashing LED
-        print("Flashing LED OFF")
-        time.sleep(off_time)  # Keep LED off for the specified off-time
-except KeyboardInterrupt:
-    print("Program interrupted")
-finally:
-    # Clean up GPIO settings
-    GPIO.cleanup()
-
-
-
-    
+Q.2 Write a program to sense the available networks using Arduino
+#include <SoftwareSerial.h>
+#include <ESP8266WiFi.h>
+SoftwareSerial espSerial(2, 3); // RX, TX
+WiFiClass WiFi;
+void setup() {
+ Serial.begin(115200); // Start Serial Monitor
+ espSerial.begin(115200); // Start ESP Serial
+ // Initialize ESP8266
+ espSerial.println("AT+RST"); // Reset the ESP
+ delay(1000);
+ espSerial.println("AT+CWMODE=1"); // Set to Station mode
+ delay(1000);
+}
+void loop() {
+ espSerial.println("AT+CWLAP"); // Command to list available networks
+ delay(5000); // Wait for the response
+ while (espSerial.available()) {
+ Serial.write(espSerial.read()); // Print response to Serial Monitor
+ }
+ delay(10000); // Wait before next scan
+}
