@@ -1,0 +1,97 @@
+Q.1. Write a Java Program to implement Abstract Factory Pattern for Shape interface.
+Ans
+interface Shape {
+    void draw();
+}
+class Circle implements Shape {
+    @Override
+    public void draw() {
+        System.out.println("Drawing a Circle");
+    }
+}
+class Rectangle implements Shape {
+    @Override
+    public void draw() {
+        System.out.println("Drawing a Rectangle");
+    }
+}
+class Square implements Shape {
+    @Override
+    public void draw() {
+        System.out.println("Drawing a Square");
+    }
+}
+interface ShapeFactory {
+    Shape createShape();
+}
+class TwoDShapeFactory implements ShapeFactory {
+    private String shapeType;
+    public TwoDShapeFactory(String shapeType) {
+        this.shapeType = shapeType;
+    }
+    @Override
+    public Shape createShape() {
+        if (shapeType.equalsIgnoreCase("Circle")) {
+            return new Circle();
+        } else if (shapeType.equalsIgnoreCase("Rectangle")) {
+            return new Rectangle();
+        } else if (shapeType.equalsIgnoreCase("Square")) {
+            return new Square();
+        }
+        return null;
+    }
+}
+class ThreeDShapeFactory implements ShapeFactory {
+    private String shapeType;
+    public ThreeDShapeFactory(String shapeType) {
+        this.shapeType = shapeType;
+    }
+    @Override
+    public Shape createShape() {
+        // For simplicity, let's assume we only handle 2D shapes in this case.
+        // In a real-world scenario, you can create 3D shapes like Sphere, Cube, etc.
+        System.out.println("3D shapes are not implemented in this example.");
+        return null;
+    }
+}
+public class AbstractFactoryPatternTest {
+    public static void main(String[] args) {
+        ShapeFactory shapeFactory2D = new TwoDShapeFactory("Circle");
+        Shape circle = shapeFactory2D.createShape();
+        circle.draw();
+        shapeFactory2D = new TwoDShapeFactory("Rectangle");
+        Shape rectangle = shapeFactory2D.createShape();
+        rectangle.draw();
+        ShapeFactory shapeFactory3D = new ThreeDShapeFactory("Sphere");
+        shapeFactory3D.createShape();  // Not implemented for 3D shapes in this example
+    }
+}
+
+Q2. Write a program to get temperature notification using Arduino. 
+#include <DHT.h>
+#define DHTPIN 2 // Pin where the DHT11 is connected
+#define DHTTYPE DHT11 // DHT 11
+#define LED_PIN 13 // Pin where the LED is connected
+#define TEMP_THRESHOLD 30 // Temperature threshold for notification
+DHT dht(DHTPIN, DHTTYPE);
+void setup() {
+ Serial.begin(9600); // Start serial communication
+ dht.begin(); // Initialize DHT11 sensor
+ pinMode(LED_PIN, OUTPUT); // Set LED pin as output
+}
+void loop() {
+ delay(2000); // Wait a few seconds between readings
+ float temperature = dht.readTemperature();
+ if (isnan(temperature)) {
+ Serial.println("Failed to read from DHT sensor!");
+ return;
+ }
+ Serial.print("Temperature: ");
+ Serial.print(temperature);
+ Serial.println(" °C");
+  if (temperature > TEMP_THRESHOLD) {
+ digitalWrite(LED_PIN, HIGH); // Turn the LED on
+ } else {
+ digitalWrite(LED_PIN, LOW); // Turn the LED off
+ }
+}
