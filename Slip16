@@ -1,0 +1,104 @@
+Q1. Write a Java Program to implement Observer Design Pattern for number conversion.
+Accept a number in Decimal form and represent it in Hexadecimal, Octal and Binary.
+Change the Number and it reflects in other forms also.
+Ans:
+import java.util.ArrayList;
+import java.util.List;
+class DecimalNumber {
+    private int decimalValue;
+    private List<Observer> observers;
+    public DecimalNumber() {
+        observers = new ArrayList<>();
+    }
+    public void attach(Observer observer) {
+        observers.add(observer);
+    }
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update();
+        }
+    }
+    public int getDecimalValue() {
+        return decimalValue;
+    }
+    public void setDecimalValue(int decimalValue) {
+        this.decimalValue = decimalValue;
+        notifyObservers(); // Notify observers when value changes
+    }
+}
+// Observer Interface
+interface Observer {
+    void update();  // Method that is called when the subject changes
+}
+// Concrete Observer for Binary Representation
+class BinaryRepresentation implements Observer {
+    private DecimalNumber decimalNumber;
+    public BinaryRepresentation(DecimalNumber decimalNumber) {
+        this.decimalNumber = decimalNumber;
+        this.decimalNumber.attach(this);
+    }
+
+    @Override
+    public void update() {
+        System.out.println("Binary: " + Integer.toBinaryString(decimalNumber.getDecimalValue()));
+    }
+}
+class OctalRepresentation implements Observer {
+    private DecimalNumber decimalNumber;
+    public OctalRepresentation(DecimalNumber decimalNumber) {
+        this.decimalNumber = decimalNumber;
+        this.decimalNumber.attach(this);
+    }
+    @Override
+    public void update() {
+        System.out.println("Octal: " + Integer.toOctalString(decimalNumber.getDecimalValue()));
+    }
+}
+class HexadecimalRepresentation implements Observer {
+    private DecimalNumber decimalNumber;
+    public HexadecimalRepresentation(DecimalNumber decimalNumber) {
+        this.decimalNumber = decimalNumber;
+        this.decimalNumber.attach(this);
+    }
+    @Override
+    public void update() {
+        System.out.println("Hexadecimal: " + Integer.toHexString(decimalNumber.getDecimalValue()).toUpperCase());
+    }
+}
+public class ObserverPatternTest {
+    public static void main(String[] args) {
+        DecimalNumber decimalNumber = new DecimalNumber();
+        BinaryRepresentation binary = new BinaryRepresentation(decimalNumber);
+        OctalRepresentation octal = new OctalRepresentation(decimalNumber);
+        HexadecimalRepresentation hexadecimal = new HexadecimalRepresentation(decimalNumber);
+        System.out.println("Setting decimal number to 42:");
+        decimalNumber.setDecimalValue(42); // This will notify observers and update their representations
+        System.out.println("\nSetting decimal number to 255:");
+        decimalNumber.setDecimalValue(255); // This will notify observers and update their representations
+    }
+}
+Q2.Write a program to connect with the available Wi-Fi using Arduino.
+#include <SoftwareSerial.h>
+SoftwareSerial espSerial(10, 11); // RX, TX for ESP8266
+void setup() {
+ Serial.begin(115200); // Start Serial Monitor
+ espSerial.begin(115200); // Start ESP8266 Serial
+ espSerial.println("AT+RST"); // Reset the ESP
+ delay(1000);
+ espSerial.println("AT+CWMODE=1"); // Set to Station mode
+ delay(1000);
+ espSerial.println("AT+SSID=\"your_SSID\""); // Replace with your Wi-Fi
+SSID
+ delay(1000);
+ espSerial.println("AT+PWD=\"your_PASSWORD\""); // Replace with your
+Wi-Fi Password
+ delay(1000);
+ espSerial.println("AT+CWJAP"); // Connect to Wi-Fi
+ delay(5000);
+}
+void loop() {
+ while (espSerial.available()) {
+ Serial.write(espSerial.read()); // Print ESP responses to Serial Monitor
+ }
+ delay(1000);
+}
