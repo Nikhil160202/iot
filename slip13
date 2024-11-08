@@ -1,0 +1,77 @@
+Q13.Write a Java Program to implement an Adapter design pattern in mobile charger.
+Define two classes – Volt (to measure volts) and Socket (producing constant volts of
+120V). Build an adapter that can produce 3 volts, 12 volts and default 120 volts.
+Implements Adapter pattern using Class Adapter
+class Volt {
+    private int volts;
+    public Volt(int volts) {
+        this.volts = volts;
+    }
+   public int getVolts() {
+        return volts;
+    }
+}
+class Socket {
+    public Volt getVolt() {
+        return new Volt(120);  // Default voltage is 120V
+    }
+}
+class Adapter extends Socket {
+    public Volt get3Volt() {
+        Volt v = getVolt();
+        return convertVolt(v, 40);  // 120V -> 3V
+    }
+    public Volt get12Volt() {
+        Volt v = getVolt();
+        return convertVolt(v, 10);  // 120V -> 12V
+    }
+    public Volt get120Volt() {
+        return getVolt();  // No conversion needed
+    }
+    private Volt convertVolt(Volt v, int divisor) {
+        return new Volt(v.getVolts() / divisor);
+    }
+}
+public class AdapterPatternTest {
+    public static void main(String[] args) {
+        // Create an adapter object to work with Socket
+        Adapter adapter = new Adapter();
+        Volt v3 = adapter.get3Volt();
+        Volt v12 = adapter.get12Volt();
+        Volt v120 = adapter.get120Volt();
+        System.out.println("Voltage after adapter conversion:");
+        System.out.println("3V Adapter: " + v3.getVolts() + "V");
+        System.out.println("12V Adapter: " + v12.getVolts() + "V");
+        System.out.println("120V Adapter: " + v120.getVolts() + "V");
+    }
+}
+Q.2 Write a program to measure the distance using ultrasonic sensor and make LED blink
+using Arduino. 
+const int trigPin = 9; // Trigger pin for the ultrasonic sensor
+const int echoPin = 10; // Echo pin for the ultrasonic sensor
+const int ledPin = 13; // LED pin
+void setup() {
+ Serial.begin(9600); // Start the serial communication
+ pinMode(trigPin, OUTPUT); // Set the TRIG pin as an output
+ pinMode(echoPin, INPUT); // Set the ECHO pin as an input
+ pinMode(ledPin, OUTPUT); // Set the LED pin as an output
+}
+void loop() {
+ long duration, distance;
+ digitalWrite(trigPin, LOW);
+ delayMicroseconds(2);
+ digitalWrite(trigPin, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(trigPin, LOW);
+ duration = pulseIn(echoPin, HIGH);
+ distance = (duration * 0.034) / 2;
+ Serial.print("Distance: ");
+ Serial.print(distance);
+Serial.println(" cm");
+ if (distance < 10) { // If distance is less than 10 cm
+ digitalWrite(ledPin, HIGH); // Turn the LED on
+ } else {
+ digitalWrite(ledPin, LOW); // Turn the LED off
+ }
+ delay(500); // Wait before the next measurement
+}
