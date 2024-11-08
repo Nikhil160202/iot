@@ -1,0 +1,120 @@
+Q1 Write a Java Program to implement Factory method for Pizza Store with createPizza(),
+orederPizza(), prepare(), Bake(), cut(), box(). Use this to create variety of pizza’s
+like NyStyleCheesePizza, ChicagoStyleCheesePizza etc.
+ Pizza.java 
+abstract class Pizza {
+    String name;
+    String dough;
+    String sauce;
+    public void prepare() {
+        System.out.println("Preparing " + name);
+        System.out.println("Tossing dough: " + dough);
+        System.out.println("Adding sauce: " + sauce);
+    }
+    public void bake() {
+        System.out.println("Baking " + name);
+    }
+    public void cut() {
+        System.out.println("Cutting " + name);
+    }
+    public void box() {
+        System.out.println("Boxing " + name);
+    }
+    public String getName() {
+        return name;
+    }
+}
+NyStyleCheesePizza.java
+class NyStyleCheesePizza extends Pizza {
+    public NyStyleCheesePizza() {
+        name = "NY Style Cheese Pizza";
+        dough = "Thin Crust Dough";
+        sauce = "Marinara Sauce";
+    }
+}
+ChicagoStyleCheesePizza.java
+class ChicagoStyleCheesePizza extends Pizza {
+    public ChicagoStyleCheesePizza() {
+        name = "Chicago Style Cheese Pizza";
+        dough = "Thick Crust Dough";
+        sauce = "Plum Tomato Sauce";
+    }
+    @Override
+    public void cut() {
+        System.out.println("Cutting the pizza into square slices");
+    }
+}
+PizzaStore.java
+abstract class PizzaStore {
+    public Pizza orderPizza(String type) {
+        Pizza pizza = createPizza(type)
+        if (pizza != null) {
+            pizza.prepare();
+            pizza.bake();
+            pizza.cut();
+            pizza.box();
+        } else {
+            System.out.println("Pizza type not available.");
+        }   
+        return pizza;
+    }
+    protected abstract Pizza createPizza(String type);
+}
+NyPizzaStore.java
+class NyPizzaStore extends PizzaStore {
+    @Override
+    protected Pizza createPizza(String type) {
+        if (type.equals("cheese")) {
+            return new NyStyleCheesePizza();
+        } else {
+            return null;
+        }
+    }
+}
+ChicagoPizzaStore.java
+class ChicagoPizzaStore extends PizzaStore {
+    @Override
+    protected Pizza createPizza(String type) {
+        if (type.equals("cheese")) {
+            return new ChicagoStyleCheesePizza();
+        } else {
+            return null;
+        }
+    }
+}
+PizzaStoreDemo.java
+public class PizzaStoreDemo {
+    public static void main(String[] args) {
+        PizzaStore nyStore = new NyPizzaStore();
+        PizzaStore chicagoStore = new ChicagoPizzaStore();
+        Pizza nyPizza = nyStore.orderPizza("cheese");
+        System.out.println("Ordered a " + nyPizza.getName() + "\n");
+        Pizza chicagoPizza = chicagoStore.orderPizza("cheese");
+        System.out.println("Ordered a " + chicagoPizza.getName() + "\n");
+    }
+}
+
+Q2. Write a program to sense a finger when it is placed on the board Arduino.
+Ans 
+const int sensorPin = 2; // Pin connected to the OUT of the capacitive touch
+sensor
+const int ledPin = 13; // Pin connected to the LED
+void setup() {
+ pinMode(sensorPin, INPUT); // Set the sensor pin as input
+ pinMode(ledPin, OUTPUT); // Set the LED pin as output
+ Serial.begin(9600); // Start serial communication
+}
+void loop() {
+ int sensorValue = digitalRead(sensorPin); // Read the sensor value
+ // Print sensor value to Serial Monitor
+ Serial.print("Sensor Value: ");
+ Serial.println(sensorValue);
+ // If a finger is detected (sensorValue HIGH)
+ if (sensorValue == HIGH) {
+ digitalWrite(ledPin, HIGH); // Turn the LED on
+ } else {
+ digitalWrite(ledPin, LOW); // Turn the LED off
+ }
+ delay(100); // Short delay for stability
+}
+
