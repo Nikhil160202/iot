@@ -1,0 +1,125 @@
+Q1. Write a Java Program to implement command pattern to test Remote Control.
+interface Command {
+    void execute();
+    void undo();
+}
+// Receiver Class: Light
+class Light {
+    public void on() {
+        System.out.println("The light is ON");
+    }
+    public void off() {
+        System.out.println("The light is OFF");
+    }
+}
+// Concrete Command to turn the light ON
+class LightOnCommand implements Command {
+    private Light light;
+    public LightOnCommand(Light light) {
+        this.light = light;
+    }
+    @Override
+    public void execute() {
+        light.on();
+    }
+    @Override
+    public void undo() {
+        light.off();
+    }
+}
+class LightOffCommand implements Command {
+    private Light light;
+
+    public LightOffCommand(Light light) {
+        this.light = light;
+    }
+    @Override
+    public void execute() {
+        light.off();
+    }
+    @Override
+    public void undo() {
+        light.on();
+    }
+}
+class RemoteControl {
+    private Command[] onCommands;
+    private Command[] offCommands;
+    private Command undoCommand;
+    public RemoteControl() {
+        onCommands = new Command[5];
+        offCommands = new Command[5];
+        undoCommand = null;
+        for (int i = 0; i < 5; i++) {
+            onCommands[i] = offCommands[i] = null;
+        }
+    }
+    public void setCommand(int slot, Command onCommand, Command offCommand) {
+        onCommands[slot] = onCommand;
+        offCommands[slot] = offCommand;
+    }
+    public void pressOnButton(int slot) {
+        if (onCommands[slot] != null) {
+            onCommands[slot].execute();
+            undoCommand = onCommands[slot];
+        }
+    }
+    public void pressOffButton(int slot) {
+        if (offCommands[slot] != null) {
+            offCommands[slot].execute();
+            undoCommand = offCommands[slot];
+        }
+    }
+    public void pressUndoButton() {
+        if (undoCommand != null) {
+            undoCommand.undo();
+        }
+    }
+}
+public class CommandPatternExample {
+    public static void main(String[] args) {
+        // Create a receiver (the device
+        Light livingRoomLight = new Light();
+        LightOnCommand livingRoomLightOn = new LightOnCommand(livingRoomLight);
+        LightOffCommand livingRoomLightOff = new LightOffCommand(livingRoomLight);
+        RemoteControl remote = new RemoteControl();
+        remote.setCommand(0, livingRoomLightOn, livingRoomLightOff);
+        System.out.println("Pressing ON button for light:");
+        remote.pressOnButton(0);  // Turn on the light
+        System.out.println("\nPressing OFF button for light:");
+        remote.pressOffButton(0);  // Turn off the light
+        System.out.println("\nPressing Undo button:");
+        remote.pressUndoButton();  // Undo the last operation (turn on the light again)
+    }
+}
+Q2 Write a program to get temperature notification using Arduino.
+#include <DHT.h>
+#define DHTPIN 2 // Pin where the DHT11 is connected
+#define DHTTYPE DHT11 // DHT 11
+#define LED_PIN 13 // Pin where the LED is connected
+#define TEMP_THRESHOLD 30 // Temperature threshold for notification
+DHT dht(DHTPIN, DHTTYPE);
+void setup() {
+ Serial.begin(9600); // Start serial communication
+ dht.begin(); // Initialize DHT11 sensor
+ pinMode(LED_PIN, OUTPUT); // Set LED pin as output
+}
+void loop() {
+ delay(2000); // Wait a few seconds between readings
+ // Read temperature in Celsius
+ float temperature = dht.readTemperature();
+ // Check if the reading is valid
+ if (isnan(temperature)) {
+ Serial.println("Failed to read from DHT sensor!");
+ return;
+ }
+ // Print temperature to Serial Monitor
+ Serial.print("Temperature: ");
+ Serial.print(temperature);
+ Serial.println(" °C");
+ if (temperature > TEMP_THRESHOLD) {
+ digitalWrite(LED_PIN, HIGH); // Turn the LED on
+ } else {
+ digitalWrite(LED_PIN, LOW); // Turn the LED off
+ }
+}
